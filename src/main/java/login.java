@@ -13,34 +13,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class login extends HttpServlet {
-
-    @Override
-    public void init() throws ServletException {
-        InitialContext initContext= null;
-        try {
-            initContext = new InitialContext();
-            DataSource ds = (DataSource) initContext.lookup("java:comp/env/jdbc/appname");
-            Connection conn = ds.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-//        super.doPost(httpServletRequest, httpServletResponse);
-//        httpServletResponse.setContentType("text/html;charset=utf-8");
-//        httpServletResponse.getWriter().println("Hello world!doPost" + httpServletRequest.getRemoteAddr());
-//        httpServletResponse.getWriter().println("Hello world!2");
-//        httpServletResponse.getWriter().println("Hello world!3");
-//        httpServletResponse.getWriter().println("Hello world!4");
-//        httpServletResponse.getWriter().println(httpServletRequest.getRemoteAddr());
 
         httpServletResponse.setContentType("text/html");
         PrintWriter out = httpServletResponse.getWriter();
 
-        //httpServletRequest.getRequestDispatcher("link.html").include(httpServletRequest, httpServletResponse);
-
+//        httpServletRequest.getRequestDispatcher("register.html").include(httpServletRequest, httpServletResponse);
+//
         String name = httpServletRequest.getParameter("name");
         String password = httpServletRequest.getParameter("password");
 //        out.println(name + " " + password);
@@ -52,12 +32,23 @@ public class login extends HttpServlet {
             Connection con = ds.getConnection();
 
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select * from example");
+            ResultSet rs=stmt.executeQuery("select * from users");
 
-            while(rs.next())
-                out.println(rs.getInt(1)+"  "+rs.getString(2));
-
+            boolean ok = false;
+            while(rs.next()) {
+                out.println(rs.getInt(1) + "  " + rs.getString(2)  + "  " + rs.getString(3) + "<br>");
+                if (rs.getString(2).equals(name) && rs.getString(3).equals(password)){
+                    ok = true;
+                }
+            }
             con.close();
+
+            if (ok){
+                out.println("Hello " + name);
+            }else {
+                out.println("login fail<br>");
+                httpServletRequest.getRequestDispatcher("index.html").include(httpServletRequest, httpServletResponse);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
