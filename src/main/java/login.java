@@ -36,6 +36,7 @@ public class login extends HttpServlet {
 
             boolean ok = false;
             while(rs.next()) {
+                //TODO: Make password secure
                 out.println(rs.getInt(1) + "  " + rs.getString(2)  + "  " + rs.getString(3) + "<br>");
                 if (rs.getString(2).equals(name) && rs.getString(3).equals(password)){
                     ok = true;
