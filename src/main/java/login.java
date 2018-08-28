@@ -32,7 +32,7 @@ public class login extends HttpServlet {
             Connection con = ds.getConnection();
 
             Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("select * from users");
+            ResultSet rs=stmt.executeQuery("select * from users where username = '" + name + "';");
 
             boolean ok = false;
             while(rs.next()) {
