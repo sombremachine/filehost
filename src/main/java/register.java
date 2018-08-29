@@ -1,3 +1,5 @@
+import dao.DBC;
+
 import javax.naming.InitialContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,11 +35,8 @@ public class register extends HttpServlet {
 //        out.println(name + " " + password);
 //
         if ((name != null)&&(!name.isEmpty())) {
-            InitialContext initContext = null;
             try {
-                initContext = new InitialContext();
-                DataSource ds = (DataSource) initContext.lookup("java:comp/env/jdbc/appname");
-                Connection con = ds.getConnection();
+                Connection con = DBC.dbConnection();
 
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery("select * from users where username = '" + name + "';");
