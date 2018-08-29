@@ -1,5 +1,11 @@
 
+import bean.AnotherSampleBean;
 import dao.DBC;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -13,6 +19,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 
 public class login extends HttpServlet {
     @Override
@@ -46,6 +53,23 @@ public class login extends HttpServlet {
 
             if (ok){
                 out.println("Hello " + name);
+
+                SessionFactory factory = new Configuration().configure().buildSessionFactory();
+                Session session = factory.openSession();
+                Transaction tx = null;
+                try{
+                    tx = session.beginTransaction();
+                    List<AnotherSampleBean> items = session.createQuery("from AnotherSampleBean").list();
+                    for (AnotherSampleBean item:items) {
+                        out.println("<br>" + item);
+                    }
+                }catch (HibernateException e) {
+                    if (tx!=null) tx.rollback();
+                    e.printStackTrace();
+                } finally {
+                    session.close();
+                }
+
             }else {
                 out.println("login fail<br>");
                 httpServletRequest.getRequestDispatcher("index.html").include(httpServletRequest, httpServletResponse);
